@@ -95,10 +95,6 @@ class QCoordinator(object):
             self.hyper_parameters.MAX_LR
         )
 
-        # if not self.best_accuracies_and_iterations or test_accuracy > self.best_accuracies_and_iterations[-1][1]:
-        #     self.remove_least_accurate_model_if_needed()
-        #     self.save_best_performing_model(model, iteration, test_accuracy)
-
         self.incorporate_trained_net(
             net_to_run, 
             float(test_accuracy),
@@ -119,6 +115,8 @@ class QCoordinator(object):
         trainable_params = tf_runner.count_trainable_params(model)
 
         predictions, (test_loss, test_accuracy), (best_case_loss, best_case_accuracy) = tf_runner.train_and_predict(model, iteration)
+
+        model.save(path.normpath(f"{tf_runner.hp.TRAINED_MODEL_DIR}/{model_name}_{iteration:04}.h5"))
 
         return predictions, (test_loss, test_accuracy), (best_case_loss, best_case_accuracy), trainable_params, model
 
@@ -255,7 +253,7 @@ class QCoordinator(object):
 def main():
     parser = argparse.ArgumentParser()
 
-    model_pkgpath = '/home/ashwin/repos/RL-SCA/metaqnn/models'
+    model_pkgpath = '/home/ashwin/repos/RFMod-NAS-RL-Final/metaqnn/models'
     model_choices = next(os.walk(model_pkgpath))[1]
 
     parser.add_argument(
@@ -277,10 +275,8 @@ def main():
 
     _model = importlib.import_module("models." + args.model)
 
-    
-
     factory = QCoordinator(
-        "learner_logs",
+        "metaqnn/learner_logs",
         _model.state_space_parameters,
         _model.hyper_parameters,
         args.epsilon,
