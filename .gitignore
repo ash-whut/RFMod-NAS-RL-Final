@@ -1,0 +1,12 @@
+**.ipynb_checkpoints**
+candidate_models_retrained
+mat_gen data
+trained_models
+**.h5
+**__pycache__**
+**plots**
+**learner_logs**
+**training_times.txt**
+time_elapsed.py
+**.json
+**.pyc
