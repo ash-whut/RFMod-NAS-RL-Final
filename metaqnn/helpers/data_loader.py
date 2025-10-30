@@ -12,7 +12,7 @@ def load_data(path: str, matgendata=False):
         print(f"Error: can't open HDF5 file '{path}' for reading (it might be malformed) ...")
         sys.exit(-1)
     
-    if matgendata:
+    if not matgendata:
         x = file_handle['X'][:]
         x = x.reshape(x.shape[0], 1024, 1, 2) 
         y = file_handle['Y'][:]
