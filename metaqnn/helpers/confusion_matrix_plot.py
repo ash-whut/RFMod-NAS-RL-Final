@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
+from tensorflow.keras.utils import to_categorical
 
 import argparse
 
@@ -19,18 +20,29 @@ def plotting_helper(cm, figname, cmap=plt.cm.Blues, labels=[]):
     plt.savefig(f"{figname}.pdf", format='pdf', dpi=1200, bbox_inches='tight')
     plt.savefig(f"{figname}.eps", format='eps', bbox_inches='tight')
 
-def plot_confusion_matrix(output_file_name: str, input_model_file_name: str, data_path: str, least_noise = False) -> None:
+def plot_confusion_matrix(output_file_name: str, input_model_file_name: str, data_path: str, least_noise = False, matGenData = False) -> None:
     model = tf.keras.models.load_model(input_model_file_name)
-    
-    classes = ["OOK","4ASK","8ASK",
-        "BPSK","QPSK","8PSK","16PSK","32PSK",
-        "16APSK","32APSK","64APSK","128APSK",
-        "16QAM","32QAM","64QAM","128QAM","256QAM",
-        "AM-SSB-WC","AM-SSB-SC","AM-DSB-WC","AM-DSB-SC","FM",
-        "GMSK","OQPSK","BFSK","4FSK","8FSK"]
+
+    if matGenData:
+        classes = ["BPSK", "QPSK", "8PSK",
+                   "16QAM", "32QAM", "64QAM",
+                   "128QAM", "256QAM", "16APSK",
+                   "32APSK", "64APSK", "128APSK",
+                   "FM", "AM-DSB-SC", "AM-SSB-SC"]
+    else:
+        classes = ["OOK","4ASK","8ASK",
+            "BPSK","QPSK","8PSK","16PSK","32PSK",
+            "16APSK","32APSK","64APSK","128APSK",
+            "16QAM","32QAM","64QAM","128QAM","256QAM",
+            "AM-SSB-WC","AM-SSB-SC","AM-DSB-WC","AM-DSB-SC","FM",
+            "GMSK","OQPSK","BFSK","4FSK","8FSK"]
 
     data = np.load(f'{data_path}/X_test.npy') if not least_noise else np.load(f'{data_path}/X_test_best.npy')
-    labels = np.load(f'{data_path}/Y_test.npy') if not least_noise else np.load(f'{data_path}/Y_test_best.npy')
+
+    if matGenData:
+        labels = to_categorical(np.load(f'{data_path}/Y_test.npy')) if not least_noise else to_categorical(np.load(f'{data_path}/Y_test_best.npy'))        
+    else:
+        labels = np.load(f'{data_path}/Y_test.npy') if not least_noise else np.load(f'{data_path}/Y_test_best.npy')
 
     test_Y_hat = model.predict(data, batch_size=2048)
     conf = np.zeros([len(classes), len(classes)])

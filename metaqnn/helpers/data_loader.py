@@ -19,7 +19,7 @@ def load_data(path: str, matgendata=False):
         z = file_handle['Z'][:]
     
     else:
-        x = file_handle['all_IQ_int8'][:]
+        x = file_handle['all_IQ_8bit'][:]
         x = x.reshape(x.shape[0], 1024, 1, 2) 
         y = file_handle['all_labels'][:]
         z = file_handle['all_SNRs'][:]
