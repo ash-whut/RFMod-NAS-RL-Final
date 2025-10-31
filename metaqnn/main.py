@@ -276,7 +276,7 @@ def main():
     _model = importlib.import_module("models." + args.model)
 
     factory = QCoordinator(
-        "metaqnn/learner_logs",
+        "learner_logs",
         _model.state_space_parameters,
         _model.hyper_parameters,
         args.epsilon,
